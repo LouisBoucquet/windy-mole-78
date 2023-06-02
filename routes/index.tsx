@@ -7,8 +7,8 @@ interface HomeProps {
 
 export const handler: Handlers<HomeProps> = {
   async GET(_req, ctx) {
-    const todos = await getTodos();
-    
+    const todos = await getTodos('asdf');
+
     return ctx.render({ todos });
   },
 };
@@ -16,7 +16,7 @@ export const handler: Handlers<HomeProps> = {
 export default function Home(props: PageProps<HomeProps>) {
   return (
     <>
-      <form action="/todos/" method="post">
+      <form class="bg-red-400 m-4 p-6 rounded-lg text-white" action="/todos/" method="post">
           <input required placeholder="date" name="date" type="datetime-local" />
           <input required placeholder="description" name="description" type="text" />
           <input required placeholder="assignee" name="assignee" type="text" />

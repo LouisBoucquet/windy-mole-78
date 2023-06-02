@@ -7,10 +7,11 @@ type Todo = {
 	completed: boolean,
 }
 
-export async function getTodos() {
-	const todosIterated = kv.list({
-		prefix: ['todos'],
-	});
+export async function getTodos(assignee: string) {
+	const todosIterated = kv
+		.list({
+			prefix: ['todos', assignee],
+		});
 
 	const todos: any[] = []
 
@@ -22,5 +23,14 @@ export async function getTodos() {
 }
 
 export async function addTodo(todo: Todo) {
-	await kv.set(['todos', crypto.randomUUID()], todo);
+	const mainKey = ['todos', crypto.randomUUID()];
+	const assigneeKey = ['todos', todo.assignee, crypto.randomUUID()];
+
+	await kv
+		.atomic()
+		.check({ key: mainKey, versionstamp: null })
+		.check({ key: assigneeKey, versionstamp: null })
+		.set(mainKey, todo)
+		.set(assigneeKey, todo)
+		.commit();
 }
